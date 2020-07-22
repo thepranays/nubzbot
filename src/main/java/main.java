@@ -6,6 +6,7 @@ import Events.Spam;
 import Events.Suicide;
 import Events.Vote;
 import MusicPlayer.PlayCommand;
+import MusicPlayer.QueueCommand;
 import MusicPlayer.SkipCommand;
 import MusicPlayer.StopCommand;
 import net.dv8tion.jda.api.JDA;
@@ -57,7 +58,7 @@ public class main extends ListenerAdapter {
             @Override
             public void actionPerformed(ActionEvent e)  {
                 try {
-//                    launchBot();
+                    launchBot();
                     textPane.setText("Bot Running..");
                 }catch (Exception unexpectedException){
                     textPane.setText("Unexpected Error while connecting");
@@ -70,7 +71,8 @@ public class main extends ListenerAdapter {
     ///////////LAUNCH-BOT CONTAINS API CONNECTION AND INTEGRATION OF FEATURES//////
     private static void launchBot() throws Exception{
         //CONNECT TO DISCORD API
-        JDA jdaBuilder = JDABuilder.createDefault("NzI5MzIyOTk5NTM0MTkwNjI0.XwsZWA.55nsivy92vcu5nw6pnhRZpAdByM").build();
+        JDA jdaBuilder = JDABuilder.createDefault("").build();
+
 
 
 
@@ -91,6 +93,7 @@ public class main extends ListenerAdapter {
         jdaBuilder.addEventListener(new PlayCommand());
         jdaBuilder.addEventListener(new StopCommand());
         jdaBuilder.addEventListener(new SkipCommand());
+        jdaBuilder.addEventListener(new QueueCommand());
 
         jdaBuilder.addEventListener(new Spam());
         jdaBuilder.addEventListener(new UserInfo());

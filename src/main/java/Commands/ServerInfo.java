@@ -4,10 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-
 import java.awt.*;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class ServerInfo extends ListenerAdapter {
@@ -19,30 +16,16 @@ public class ServerInfo extends ListenerAdapter {
             embedBuilder.setTitle("SERVER INFO");
             embedBuilder.setDescription("Toli Ki Jankari");
             embedBuilder.setThumbnail(e.getGuild().getIconUrl());
-
-
-            //AS IT IS ASYNCHRONOUS
-            final Timer timer = new Timer();
-            timer.scheduleAtFixedRate(new TimerTask() {
-                public void run() {
-                    embedBuilder.addField("Sarvashaktishali:",e.getGuild().getOwner().getEffectiveName(),true);
-                }
-
-            }, 0, 10);
-
-
-            embedBuilder.addField("Laundo Ki Sankhyan:",String.valueOf(e.getGuild().getMemberCount()),false);
-            embedBuilder.addField("Zinda Launde:",String.valueOf(e.getGuild().getMembers().size()),false);
-            embedBuilder.addField("Janmadin",e.getGuild().getTimeCreated().toString(),false);
-            embedBuilder.addField("Jamin:",e.getGuild().getRegionRaw(),false);
-            embedBuilder.addField("Pramanikaran:",e.getGuild().getVerificationLevel().name(),false);
-
+            embedBuilder.addField("Sarvashaktishali:", e.getGuild().retrieveOwner().complete().getUser().getName(), true);
+            embedBuilder.addField("Laundo Ki Sankhyan:", String.valueOf(e.getGuild().getMemberCount()), false);
+            embedBuilder.addField("Zinda Launde:", String.valueOf(e.getGuild().getMembers().size()), false);
+            embedBuilder.addField("Janmadin", e.getGuild().getTimeCreated().toString(), false);
+            embedBuilder.addField("Jamin:", e.getGuild().getRegionRaw(), false);
+            embedBuilder.addField("Pramanikaran:", e.getGuild().getVerificationLevel().name(), false);
 
 
             embedBuilder.setColor(Color.CYAN);
             e.getChannel().sendMessage(embedBuilder.build()).queue();
-
-
         }
     }
 }

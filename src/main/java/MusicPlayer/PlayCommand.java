@@ -1,6 +1,7 @@
 package MusicPlayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeSearchProvider;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -67,6 +68,11 @@ public class PlayCommand extends ListenerAdapter {
 
 
         }
-
     }
+
+//    public void youtubeAPISearch(GuildMessageReceivedEvent e){
+//        String[] inputFound = e.getMessage().getContentRaw().split(" ");
+//        YoutubeSearchProvider youtubeSearchProvider = new YoutubeSearchProvider();
+//        youtubeSearchProvider.loadSearchResult(inputFound[1],);
+//    }
 }
