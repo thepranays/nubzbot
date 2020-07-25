@@ -71,7 +71,7 @@ public class main extends ListenerAdapter {
     ///////////LAUNCH-BOT CONTAINS API CONNECTION AND INTEGRATION OF FEATURES//////
     private static void launchBot() throws Exception{
         //CONNECT TO DISCORD API
-        JDA jdaBuilder = JDABuilder.createDefault("").build();
+        JDA jdaBuilder = JDABuilder.createDefault("DISCORDBOTTOKEN").build();
 
 
 

@@ -13,7 +13,7 @@ public class SkipCommand extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
         String[] messageReceived = event.getMessage().getContentRaw().split(" ");
-        if(messageReceived[0].equalsIgnoreCase("skip")){
+        if(messageReceived[0].equalsIgnoreCase("gaanabadal")){
             TextChannel channel = event.getChannel();
             PlayerManager playerManager = PlayerManager.getINSTANCE();
             GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());

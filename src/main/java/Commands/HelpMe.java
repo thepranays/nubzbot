@@ -24,7 +24,7 @@ public class HelpMe extends ListenerAdapter {
             //SPAM COMMAND
             embedBuilder.addField("⚡spam","Use To Spam Someone In PM \nspam @mention {message}",false);
             //MUSIC COMMAND
-            embedBuilder.addField("\uD83C\uDFB5Music","Use To Play Music\ngaana {link}\nskip:To Skip Song\nchuphoja:To Stop Song",false);
+            embedBuilder.addField("\uD83C\uDFB5Music","Use To Play Music\ngaana {link}\ngaanabadal:To Skip Song\nchuphoja:To Stop Song\ngitmaala:To Display Queue List",false);
             //VOTE COMMAND
             embedBuilder.addField("\uD83D\uDDF3Vote","Use To Start A Vote\nmatdan {topic of vote}",false);
 

@@ -17,10 +17,10 @@ public class TrackScheduler extends AudioEventAdapter {
 
     private final AudioPlayer player;
     private final BlockingQueue<AudioTrack> queue;
-    private ArrayList<String> queueString;
 
-    public ArrayList<String> getQueueString(){
-        return queueString;
+
+    public BlockingQueue<AudioTrack> getQueue() {
+        return queue;
     }
 
     /**
@@ -42,7 +42,6 @@ public class TrackScheduler extends AudioEventAdapter {
         // something is playing, it returns false and does nothing. In that case the player was already playing so this
         // track goes to the queue instead.
         if (!player.startTrack(track, true)) {
-            this.queueString.add(track.getInfo().title);
             queue.offer(track);
 
 
