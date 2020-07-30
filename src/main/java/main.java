@@ -12,8 +12,7 @@ import MusicPlayer.StopCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-
-
+import com.google.api.client.json.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,49 +28,51 @@ v1.0
 
 public class main extends ListenerAdapter {
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) throws Exception  {
+        launchBot();
 
-        ///////////UI FOR BOT LAUNCHING AND ETC..///////
-
-        JFrame frame=new JFrame();
-        // Creating Button
-        JButton launchButton = new JButton("LAUNCH BOT!");
-        JTextPane textPane = new JTextPane();
-
-        //Setting Components
-        launchButton.setBounds(60,50,150, 50);
-        textPane.setBounds(90,100,90,50);
-
-        //Adding Components onto the frame
-        frame.add(launchButton);
-        frame.add(textPane);
-
-        // Setting Frame
-        frame.setSize(300,200);
-        frame.setTitle("NuBzLauncher");
-        frame.setLayout(null);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        //OnButtonClicked
-        launchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e)  {
-                try {
-                    launchBot();
-                    textPane.setText("Bot Running..");
-                }catch (Exception unexpectedException){
-                    textPane.setText("Unexpected Error while connecting");
-                }
-            }
-        });
+//        ///////////UI FOR BOT LAUNCHING AND ETC..///////
+//
+//        JFrame frame=new JFrame();
+//        // Creating Button
+//        JButton launchButton = new JButton("LAUNCH BOT!");
+//        JTextPane textPane = new JTextPane();
+//
+//        //Setting Components
+//        launchButton.setBounds(60,50,150, 50);
+//        textPane.setBounds(90,100,90,50);
+//
+//        //Adding Components onto the frame
+//        frame.add(launchButton);
+//        frame.add(textPane);
+//
+//        // Setting Frame
+//        frame.setSize(300,200);
+//        frame.setTitle("NuBzLauncher");
+//        frame.setLayout(null);
+//        frame.setVisible(true);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//
+//        //OnButtonClicked
+//        launchButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e)  {
+//                try {
+//
+//                    textPane.setText("Bot Running..");
+//
+//                }catch (Exception unexpectedException){
+//                    textPane.setText("Unexpected Error while connecting");
+//                }
+//            }
+//        });
     }
 
 
     ///////////LAUNCH-BOT CONTAINS API CONNECTION AND INTEGRATION OF FEATURES//////
     private static void launchBot() throws Exception{
         //CONNECT TO DISCORD API
-        JDA jdaBuilder = JDABuilder.createDefault("DISCORDBOTTOKEN").build();
+        JDA jdaBuilder = JDABuilder.createDefault("DISCORDAPIKEY").build();
 
 
 

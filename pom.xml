@@ -17,8 +17,40 @@
                     <target>7</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <finalName>uber-${artifactId}-${version}</finalName>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
 
     <dependencies>
         <dependency>
@@ -33,6 +65,7 @@
             <artifactId>google-api-services-youtube</artifactId>
             <version>v3-rev222-1.25.0</version>
         </dependency>
+
 
         <dependency>
             <groupId>com.mashape.unirest</groupId>
@@ -55,20 +88,20 @@
         </dependency>
     </dependencies>
 
-<repositories>
-    <repository>
-        <id>jcenter</id>
-        <name>jcenter-bintray</name>
-        <url>https://jcenter.bintray.com</url>
-    </repository>
-    <repository>
-        <id>central</id>
-        <name>bintray</name>
-        <url>https://jcenter.bintray.com</url>
-    </repository>
+    <repositories>
+        <repository>
+            <id>jcenter</id>
+            <name>jcenter-bintray</name>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>bintray</name>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
 
 
-</repositories>
+    </repositories>
 
 
 </project>

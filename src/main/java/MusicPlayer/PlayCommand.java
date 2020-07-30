@@ -5,8 +5,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchResult;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeSearchProvider;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -59,7 +57,8 @@ public class PlayCommand extends ListenerAdapter {
             //TO CHECK WHEATHER SONG IS PLAYING OR NOT SO TO GET KNOW CONNECTED + PLAYING STATUS
             //SO THAT OUT MESSAGE DNT REPEAT
             if(!(audioPlayer.getPlayingTrack()==null)) {
-                channel.sendMessage("Pehle se tumhare sath hu!").queue();
+//                channel.sendMessage("Pehle se tumhare sath hu!").queue();
+
 
                 //CHECK WHEATHER THE INPUT MESSAGE IS URL OR NORMAL SEARCH
                 play(inputReceived,playerManager,channel,event);
@@ -78,7 +77,7 @@ public class PlayCommand extends ListenerAdapter {
 
 
         //Check whether user  is in channel or not
-        if (!memberVoiceState.inVoiceChannel()) {
+        if (!(memberVoiceState.inVoiceChannel())) {
             channel.sendMessage("Bhai Channel Join Karle Pehle..").queue();
             return;
         }
@@ -97,9 +96,9 @@ public class PlayCommand extends ListenerAdapter {
         String inputRawString = e.getMessage().getContentRaw();
         String[] inputFound = inputRawString.split(" ");
         if (inputFound[0].equalsIgnoreCase("gaana")) {
-            joinChannel(e,inputRawString.substring(5));
+            joinChannel(e,inputRawString.substring(4));
             PlayerManager playerManager = PlayerManager.getINSTANCE();
-            playerManager.getGuildMusicManger(e.getGuild()).player.setVolume(10);
+            playerManager.getGuildMusicManger(e.getGuild()).player.setVolume(100);
             e.getChannel().sendMessage("Playing Gaana :D").queue();
 
 
@@ -126,14 +125,14 @@ public class PlayCommand extends ListenerAdapter {
         if(!(isUrl(inputReceived))){
             String ytSearched = youtubeAPISearch(inputReceived);
             if(ytSearched ==null){
-                channel.sendMessage("Gaana nhi mila !").queue();
+                playerManager.loadAndPlay(event.getChannel(), inputReceived);
                 return;
             }
 
             inputReceived = ytSearched;
             playerManager.loadAndPlay(channel,inputReceived);
         }else {
-            playerManager.loadAndPlay(event.getChannel(), inputReceived);
+           channel.sendMessage("Gaana nhi mila").queue();
         }
     }
 
@@ -147,7 +146,7 @@ public class PlayCommand extends ListenerAdapter {
                     .setMaxResults(1L)
                     .setType("video")
                     .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
-                    .setKey("YOUTUBEAPIV3TOKEN")
+                    .setKey("YOUTUBEAPIV3KEY")
                     .execute()
                     .getItems();
             if(!results.isEmpty()){
