@@ -5,13 +5,13 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchResult;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.GuildVoiceState;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.*;
+
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import javax.annotation.Nullable;
@@ -23,8 +23,8 @@ import java.util.List;
 
 public class PlayCommand extends ListenerAdapter {
     private final YouTube youTube;
-
-    //CONSTRUCTOR USED TO MAKE YOUTUBE BUILDER
+    private TextChannel tchannel;
+    //CONSTRUCTOR USED TO MAKE YOUTUBE API BUILDER
     public PlayCommand(){
         //Connect To YOUTUBE-API
         YouTube youTubeTemp = null;
@@ -36,7 +36,9 @@ public class PlayCommand extends ListenerAdapter {
             e.printStackTrace();
         }
         this.youTube = youTubeTemp;
+
     }
+
 
 
 
@@ -52,7 +54,6 @@ public class PlayCommand extends ListenerAdapter {
         audioManager.openAudioConnection(voiceChannel);
 
 
-
         if (audioManager.isConnected()) {
             //TO CHECK WHEATHER SONG IS PLAYING OR NOT SO TO GET KNOW CONNECTED + PLAYING STATUS
             //SO THAT OUT MESSAGE DNT REPEAT
@@ -63,14 +64,16 @@ public class PlayCommand extends ListenerAdapter {
                 //CHECK WHEATHER THE INPUT MESSAGE IS URL OR NORMAL SEARCH
                 play(inputReceived,playerManager,channel,event);
             }else{
-                channel.sendMessage("Join kr rha bhai <3").queue();
+//                channel.sendMessage("Join kr rha bhai <3").queue();
 
                 //CHECK WHEATHER THE INPUT MESSAGE IS URL OR NORMAL SEARCH
                 play(inputReceived,playerManager,channel,event);
             }
             return;
 
-        }else{
+        }
+
+        else{
             //CHECK WHEATHER THE INPUT MESSAGE IS URL OR NORMAL SEARCH
             play(inputReceived,playerManager,channel,event);
         }
@@ -81,7 +84,6 @@ public class PlayCommand extends ListenerAdapter {
             channel.sendMessage("Bhai Channel Join Karle Pehle..").queue();
             return;
         }
-
 
         //Check for permission
         if (!selfMember.hasPermission(voiceChannel, Permission.VOICE_CONNECT)) {
@@ -94,19 +96,28 @@ public class PlayCommand extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
         String inputRawString = e.getMessage().getContentRaw();
-        String[] inputFound = inputRawString.split(" ");
-        if (inputFound[0].equalsIgnoreCase("gaana")) {
-            joinChannel(e,inputRawString.substring(4));
-            PlayerManager playerManager = PlayerManager.getINSTANCE();
-            playerManager.getGuildMusicManger(e.getGuild()).player.setVolume(100);
-            e.getChannel().sendMessage("Playing Gaana :D").queue();
+        Member selfMember = e.getGuild().getSelfMember();
+
+        try {
+            if(!(e.getMessage().getMember().equals(selfMember))) {
+                if (e.getChannel().getName().equalsIgnoreCase("NubzMusicRequest")) {
+                    joinChannel(e, inputRawString);
+                    PlayerManager playerManager = PlayerManager.getINSTANCE();
+                    playerManager.getGuildMusicManger(e.getGuild()).player.setVolume(100);
+
+//                e.getChannel().sendMessage("Playing Gaana :D").queue();
 
 
+                }
+            }
+        }catch(NullPointerException NullPointer){
+          e.getChannel().sendMessage("Type 'nubzsetup' first").queue();
         }
+
     }
 
     //CHECK WHEATHER INPUT IS URL OR NOT
-    public boolean isUrl(String input){
+    private boolean isUrl(String input){
        try{
            new URL(input);
            return true;
@@ -120,7 +131,8 @@ public class PlayCommand extends ListenerAdapter {
         else:Search on Youtube Using YT-V3 API And get a Video id and Make A URL STRING
         Then,Play
      */
-    public void play(String inputReceived,PlayerManager playerManager,TextChannel channel,GuildMessageReceivedEvent event){
+
+    private void play(String inputReceived,PlayerManager playerManager,TextChannel channel,GuildMessageReceivedEvent event){
         //CHECK WHEATHER THE INPUT MESSAGE IS URL OR NORMAL SEARCH
         if(!(isUrl(inputReceived))){
             String ytSearched = youtubeAPISearch(inputReceived);
@@ -130,15 +142,20 @@ public class PlayCommand extends ListenerAdapter {
             }
 
             inputReceived = ytSearched;
-            playerManager.loadAndPlay(channel,inputReceived);
+
+            //TEST
+            /*channel.sendMessage(inputReceived).queue();  //RECEVING LINK*/
+
+            playerManager.loadAndPlay(channel, inputReceived);
         }else {
-           channel.sendMessage("Gaana nhi mila").queue();
+            playerManager.loadAndPlay(event.getChannel(),inputReceived);
+
         }
     }
 
    //YOUTUBE API SEARCH AND RETURN VIDEOID
     @Nullable
-    public String youtubeAPISearch(String input){
+    private String youtubeAPISearch(String input){
         try{
             List<SearchResult> results = youTube.search()
                     .list("id,snippet")
@@ -146,17 +163,28 @@ public class PlayCommand extends ListenerAdapter {
                     .setMaxResults(1L)
                     .setType("video")
                     .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
-                    .setKey("YOUTUBEAPIV3KEY")
+                    .setKey("AIzaSyDjthsRgcE1dWeyDfS2FvDJsJ9e2iP6tCo")
                     .execute()
                     .getItems();
             if(!results.isEmpty()){
                 String videoId =  results.get(0).getId().getVideoId();
                 return "https://www.youtube.com/watch?v=" + videoId;
             }
+
         }catch (Exception e){
             e.printStackTrace();
         }
 
         return null;
     }
-}
+
+
+
+
+
+
+
+
+    }
+
+

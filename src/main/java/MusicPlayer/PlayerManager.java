@@ -16,13 +16,13 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.HashMap;
 
-import java.util.List;
 import java.util.Map;
 
 public class PlayerManager  {
     private static PlayerManager INSTANCE;
     private final AudioPlayerManager playerManager;
     private final Map<Long,GuildMusicManager> musicManagerMap;
+
 
 
     private PlayerManager() {
@@ -33,7 +33,7 @@ public class PlayerManager  {
 
 
     }
-    public synchronized GuildMusicManager getGuildMusicManger(Guild guild) {
+    public GuildMusicManager getGuildMusicManger(Guild guild) {
             long guildId = guild.getIdLong();
             GuildMusicManager musicManager = musicManagerMap.get(guildId);
             if(musicManager == null){

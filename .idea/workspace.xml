@@ -2,21 +2,33 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="noobscommunitydiscordbot:jar" />
+      <artifact name="noobscommunitydiscordbot:jar2" />
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="47902bf3-ac7f-4e7f-afda-5d09c0766bc2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/noobscommunitydiscordbot_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="47902bf3-ac7f-4e7f-afda-5d09c0766bc2" name="Default Changelist" comment="Fixed Some Bugs in Musicfeature">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/noobscommunitydiscordbot.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/artifacts/noobscommunitydiscordbot_jar/noobscommunitydiscordbot.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/noobscommunitydiscordbot_jar/noobscommunitydiscordbot.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Commands/HelpMe.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Commands/HelpMe.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Commands/ServerInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Commands/ServerInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Events/MyStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Events/MyStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Events/Suicide.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/MusicPlayer/PlayCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MusicPlayer/PlayCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MusicPlayer/PlayerManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MusicPlayer/PlayerManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MusicPlayer/StopCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MusicPlayer/StopCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MusicPlayer/TrackScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MusicPlayer/TrackScheduler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/META-INF/noobscommunitydiscordbot.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Commands/HelpMe.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Commands/HelpMe.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Commands/ServerInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Commands/ServerInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Events/MyStatus.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Events/MyStatus.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Events/Suicide.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/PlayCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MusicPlayer/PlayCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/main$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/PlayerManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MusicPlayer/PlayerManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/StopCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MusicPlayer/StopCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/TrackScheduler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MusicPlayer/TrackScheduler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/main.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -24,6 +36,9 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageViewManager">
+    <option name="myElementSize" value="267" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -34,6 +49,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="MERGE" />
   </component>
   <component name="MavenImportPreferences">
     <option name="importingSettings">
@@ -46,11 +62,15 @@
   <component name="ProjectId" id="1eGhWoD6XYsikEeTvgQsEeRPDNW" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
     <property name="GenerateAntBuildDialog.backupFiles" value="true" />
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="noobscommunitydiscordbot" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="JSON" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -58,7 +78,7 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.18461539" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
+    <property name="settings.editor.selected.configurable" value="preferences.customizations" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -132,7 +152,14 @@
       <option name="project" value="LOCAL" />
       <updated>1595643532985</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Fixed Some Bugs in Musicfeature">
+      <created>1596133351805</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1596133351805</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -152,6 +179,10 @@
     <MESSAGE value="QueueCommand" />
     <MESSAGE value="Fixed ServerOwnerEmbedField" />
     <MESSAGE value="Integrated YOUTUBE API v3&#10;Added display queue feature&#10;Added YoutubeSearch And get URL." />
-    <option name="LAST_COMMIT_MESSAGE" value="Integrated YOUTUBE API v3&#10;Added display queue feature&#10;Added YoutubeSearch And get URL." />
+    <MESSAGE value="Fixed Some Bugs in Musicfeature" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed Some Bugs in Musicfeature" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/noobscommunitydiscordbot$main.ic" NAME="main Coverage Results" MODIFIED="1605405697243" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

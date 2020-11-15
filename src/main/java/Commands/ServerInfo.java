@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class ServerInfo extends ListenerAdapter {
 
-    public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+    public synchronized void onGuildMessageReceived(GuildMessageReceivedEvent e) {
         String[] inputFound = e.getMessage().getContentRaw().split(" ");
         if (inputFound[0].equalsIgnoreCase("serverinfo")) {
             EmbedBuilder embedBuilder = new EmbedBuilder();

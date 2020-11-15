@@ -1,25 +1,17 @@
 import Commands.HelpMe;
 import Commands.ServerInfo;
 import Commands.UserInfo;
-import Events.MyStatus;
-import Events.Spam;
-import Events.Suicide;
-import Events.Vote;
-import MusicPlayer.PlayCommand;
-import MusicPlayer.QueueCommand;
-import MusicPlayer.SkipCommand;
-import MusicPlayer.StopCommand;
+import Events.*;
+import MusicPlayer.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import com.google.api.client.json.*;
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 
 /*
-DO NOT EDIT BY PRANAYS PERMISSION
+DO NOT EDIT WITHOUT PRANAYS PERMISSION
 Discord Private Bot For NooBs CommuniTy :3
 v1.0
  */
@@ -72,7 +64,14 @@ public class main extends ListenerAdapter {
     ///////////LAUNCH-BOT CONTAINS API CONNECTION AND INTEGRATION OF FEATURES//////
     private static void launchBot() throws Exception{
         //CONNECT TO DISCORD API
-        JDA jdaBuilder = JDABuilder.createDefault("DISCORDAPIKEY").build();
+        JDA jdaBuilder = JDABuilder.createDefault("NzI5MzIyOTk5NTM0MTkwNjI0.XwHQ-Q.QkQnU7A_BHRAnWe4YIuzyOaoiPQ")
+                .enableIntents(GatewayIntent.GUILD_MEMBERS,
+                               GatewayIntent.GUILD_VOICE_STATES,
+                               GatewayIntent.GUILD_MESSAGE_REACTIONS,GatewayIntent.GUILD_MESSAGES)
+                .enableCache(CacheFlag.VOICE_STATE)
+
+                                //TO ACCESS MEMBERS CACHE IN GUILD
+                .build();
 
 
 
@@ -84,21 +83,23 @@ public class main extends ListenerAdapter {
 
 
 
-        //INTEGRATING EVENTS OF BOT
+        //ADDING EVENTS OF BOT
         jdaBuilder.addEventListener(new MyStatus());
         jdaBuilder.addEventListener(new HelpMe());
-        jdaBuilder.addEventListener(new Suicide());
         jdaBuilder.addEventListener(new ServerInfo());
-
+        jdaBuilder.addEventListener(new GreetUser());
 
         jdaBuilder.addEventListener(new PlayCommand());
         jdaBuilder.addEventListener(new StopCommand());
         jdaBuilder.addEventListener(new SkipCommand());
         jdaBuilder.addEventListener(new QueueCommand());
+        jdaBuilder.addEventListener(new PauseCommand());
+        jdaBuilder.addEventListener(new MusicPlayer());
 
         jdaBuilder.addEventListener(new Spam());
         jdaBuilder.addEventListener(new UserInfo());
         jdaBuilder.addEventListener(new Vote());
+
     }
 
 

@@ -11,7 +11,9 @@ public class MyStatus extends ListenerAdapter {
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
         super.onReady(event);
-        Activity activity = Activity.playing("Type 'helpme'");
+        Activity activity = Activity.listening("Your Sweet Voice\n'helpme'");
+//        Activity activity = Activity.playing("Type 'helpme'");
         event.getJDA().getPresence().setActivity(activity);
+
     }
 }
