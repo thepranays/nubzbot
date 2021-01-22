@@ -6,6 +6,11 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchResult;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
+import com.wrapper.spotify.SpotifyApi;
+import com.wrapper.spotify.model_objects.specification.Paging;
+import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
+import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
+import com.wrapper.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 
@@ -18,12 +23,22 @@ import javax.annotation.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 //v1.0
 
 public class PlayCommand extends ListenerAdapter {
     private final YouTube youTube;
     private TextChannel tchannel;
+    private static ClientCredentialsRequest clientCredentialsRequest;
+    private static GetPlaylistsItemsRequest getPlaylistsItemsRequest;
+
+
+
+
     //CONSTRUCTOR USED TO MAKE YOUTUBE API BUILDER
     public PlayCommand(){
         //Connect To YOUTUBE-API
@@ -51,7 +66,9 @@ public class PlayCommand extends ListenerAdapter {
         GuildVoiceState memberVoiceState = event.getMember().getVoiceState();
         VoiceChannel voiceChannel = memberVoiceState.getChannel();
         Member selfMember = event.getGuild().getSelfMember();
+
         audioManager.openAudioConnection(voiceChannel);
+
 
 
         if (audioManager.isConnected()) {
@@ -98,8 +115,9 @@ public class PlayCommand extends ListenerAdapter {
         String inputRawString = e.getMessage().getContentRaw();
         Member selfMember = e.getGuild().getSelfMember();
 
+        //Youtube
         try {
-            if(!(e.getMessage().getMember().equals(selfMember))) {
+            if(!(Objects.equals(e.getMessage().getMember(), selfMember))) {
                 if (e.getChannel().getName().equalsIgnoreCase("NubzMusicRequest")) {
                     joinChannel(e, inputRawString);
                     PlayerManager playerManager = PlayerManager.getINSTANCE();
@@ -113,6 +131,25 @@ public class PlayCommand extends ListenerAdapter {
         }catch(NullPointerException NullPointer){
           e.getChannel().sendMessage("Type 'nubzsetup' first").queue();
         }
+
+        //Spotify Test
+//        try {
+//            if(!(Objects.equals(e.getMessage().getMember(), selfMember))) {
+//                if (e.getChannel().getName().equalsIgnoreCase("NubzMusicSpotifyRequest")) {
+//                    for(PlaylistTrack playlistTrack:spotifyGetSongNameByPlaylist(inputRawString)) {
+//                        joinChannel(e, playlistTrack.getTrack().getName());
+//                    }
+//                    PlayerManager playerManager = PlayerManager.getINSTANCE();
+//                    playerManager.getGuildMusicManger(e.getGuild()).player.setVolume(100);
+//
+//               e.getChannel().sendMessage("Playing Gaana :D").queue();
+//
+//
+//                }
+//            }
+//        }catch(NullPointerException NullPointer){
+//            e.getChannel().sendMessage("Type 'nubzsetup' first").queue();
+//        }
 
     }
 
@@ -153,6 +190,26 @@ public class PlayCommand extends ListenerAdapter {
         }
     }
 
+
+
+
+    private List<PlaylistTrack> spotifyGetSongNameByPlaylist(String uri){
+            SpotifyRequests spotifyRequests = new SpotifyRequests( convertIntoPlaylistID(uri));
+            return spotifyRequests.getPlaylist();
+    }
+
+    //AS spotify requires 22 Character ID which contains in URI of playlist
+    //It starts from 34+ character Ends after 34+22 character
+    private String convertIntoPlaylistID(String uri){
+        String[] uriSplit = uri.split("");
+        return uri.substring(34,56);
+
+
+    }
+
+
+
+
    //YOUTUBE API SEARCH AND RETURN VIDEOID
     @Nullable
     private String youtubeAPISearch(String input){
@@ -163,7 +220,7 @@ public class PlayCommand extends ListenerAdapter {
                     .setMaxResults(1L)
                     .setType("video")
                     .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
-                    .setKey("AIzaSyDjthsRgcE1dWeyDfS2FvDJsJ9e2iP6tCo")
+                    .setKey("")
                     .execute()
                     .getItems();
             if(!results.isEmpty()){

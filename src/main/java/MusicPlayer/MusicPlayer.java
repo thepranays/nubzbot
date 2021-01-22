@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.jws.soap.SOAPBinding;
 import java.awt.*;
 import java.util.Map;
 import java.util.Objects;
@@ -189,7 +191,7 @@ public class MusicPlayer extends ListenerAdapter {
     //Create Player
     private void createPlayer(Guild guild){
         EmbedBuilder player = new EmbedBuilder();
-        player.setTitle("MusicPlayer");
+        player.setTitle(guild.getName()+"'s MusicPlayer");
         player.setImage(guild.getIconUrl());
         player.setColor(Color.RED);
         guild.getTextChannelsByName("NubzMusicPlayer",true).get(0).sendMessage(player.build()).queue((message -> {
@@ -216,17 +218,20 @@ public class MusicPlayer extends ListenerAdapter {
         super.onGuildVoiceJoin(event);
         Member selfMember = event.getGuild().getSelfMember();
         GuildVoiceState guildVoiceState = selfMember.getVoiceState();
+
         assert guildVoiceState != null;
         if (guildVoiceState.inVoiceChannel()) {
             PlayerManager playerManager = PlayerManager.getINSTANCE();
             GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
             AudioPlayer audioPlayer = guildMusicManager.player;
-            TextChannel tchannel;
+            AudioManager audioManager = event.getGuild().getAudioManager();
+          TextChannel tchannel;
 
             try {
                 tchannel = event.getGuild().getTextChannelsByName("NubzMusicPlayer", true).get(0);
             } catch (IndexOutOfBoundsException n) {
                 tchannel = event.getGuild().createTextChannel("NubzMusicPlayer").complete();
+
             }
 
 
@@ -239,8 +244,16 @@ public class MusicPlayer extends ListenerAdapter {
 
                 //THREAD-POOL To Get Current playing music in tchannel
                  ScheduledFuture<?> scheduledFuture = executor.scheduleWithFixedDelay(() -> {
+
+                    //TO CHECK WHEATHER THERE ARE MEMBERS IN VOICE CHANNEL LISTENING TO SONG
+                     if(event.getChannelJoined().getMembers().size()==1){
+//                        audioPlayer.stopTrack();    //Stops the track    CLEARS QUE IF SWITCHTED CHANNEL
+                        audioManager.closeAudioConnection();//Disconnect From Channel
+
+                     }
+
                      //To Check ,if Song changes
-                    if (!lastPlayedSong.get().equalsIgnoreCase(audioPlayer.getPlayingTrack().getInfo().title)) {
+                    if (!(lastPlayedSong.get().equalsIgnoreCase(audioPlayer.getPlayingTrack().getInfo().title))) {
                         lastPlayedSong.set(audioPlayer.getPlayingTrack().getInfo().title);
                         try {
                             EmbedBuilder musicPlayer = new EmbedBuilder();
@@ -272,14 +285,25 @@ public class MusicPlayer extends ListenerAdapter {
         }
     }
 
+
     @Override
     public void onGuildVoiceLeave(@Nonnull GuildVoiceLeaveEvent event) {
         super.onGuildVoiceLeave(event);
+        if(event.getChannelLeft().getMembers().size() == 1 && Objects.requireNonNull(event.getGuild().getSelfMember().getVoiceState()).inVoiceChannel()){
+            AudioManager audioManager = event.getGuild().getAudioManager();
+            audioManager.closeAudioConnection();
+            scheduledFutureMap.get(event.getChannelLeft().getId()).cancel(true);
 
+        }
         if((event.getMember().equals(event.getGuild().getSelfMember()))) {
+
             scheduledFutureMap.get(event.getChannelLeft().getId()).cancel(true);
         }
+
+
     }
+
+
 
 
 

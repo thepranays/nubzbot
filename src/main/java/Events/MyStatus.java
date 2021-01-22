@@ -12,7 +12,7 @@ public class MyStatus extends ListenerAdapter {
     public void onReady(@Nonnull ReadyEvent event) {
         super.onReady(event);
         Activity activity = Activity.listening("Your Sweet Voice\n'helpme'");
-//        Activity activity = Activity.playing("Type 'helpme'");
+//        Activity activity = Activity.playing("Under construction'");
         event.getJDA().getPresence().setActivity(activity);
 
     }
