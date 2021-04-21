@@ -1,6 +1,7 @@
 package MusicPlayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
@@ -74,6 +75,7 @@ public class MusicPlayer extends ListenerAdapter {
         AudioManager audioManager = event.getGuild().getAudioManager();
         GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
         AudioPlayer audioPlayer =guildMusicManager.player;
+
 
         TrackScheduler trackScheduler = guildMusicManager.scheduler;
 
@@ -225,6 +227,9 @@ public class MusicPlayer extends ListenerAdapter {
             GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
             AudioPlayer audioPlayer = guildMusicManager.player;
             AudioManager audioManager = event.getGuild().getAudioManager();
+            TrackScheduler trackScheduler = new TrackScheduler(audioPlayer,event.getGuild());
+
+
           TextChannel tchannel;
 
             try {
@@ -233,6 +238,7 @@ public class MusicPlayer extends ListenerAdapter {
                 tchannel = event.getGuild().createTextChannel("NubzMusicPlayer").complete();
 
             }
+
 
 
             try {
@@ -291,8 +297,9 @@ public class MusicPlayer extends ListenerAdapter {
         super.onGuildVoiceLeave(event);
         if(event.getChannelLeft().getMembers().size() == 1 && Objects.requireNonNull(event.getGuild().getSelfMember().getVoiceState()).inVoiceChannel()){
             AudioManager audioManager = event.getGuild().getAudioManager();
-            audioManager.closeAudioConnection();
             scheduledFutureMap.get(event.getChannelLeft().getId()).cancel(true);
+            audioManager.closeAudioConnection();
+
 
         }
         if((event.getMember().equals(event.getGuild().getSelfMember()))) {

@@ -6,6 +6,7 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchResult;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
+import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.model_objects.specification.Paging;
 import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
@@ -68,8 +69,7 @@ public class PlayCommand extends ListenerAdapter {
         Member selfMember = event.getGuild().getSelfMember();
 
         audioManager.openAudioConnection(voiceChannel);
-
-
+        
 
         if (audioManager.isConnected()) {
             //TO CHECK WHEATHER SONG IS PLAYING OR NOT SO TO GET KNOW CONNECTED + PLAYING STATUS
@@ -184,6 +184,7 @@ public class PlayCommand extends ListenerAdapter {
             /*channel.sendMessage(inputReceived).queue();  //RECEVING LINK*/
 
             playerManager.loadAndPlay(channel, inputReceived);
+
         }else {
             playerManager.loadAndPlay(event.getChannel(),inputReceived);
 

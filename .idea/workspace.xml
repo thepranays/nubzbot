@@ -12,6 +12,23 @@
     <list default="true" id="47902bf3-ac7f-4e7f-afda-5d09c0766bc2" name="Default Changelist" comment="Jan PUSH&#10;&#10;Updating code base">
       <changelist_data name="DreamFist" email="kewinlee123@gmail.comm" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/noobscommunitydiscordbot_jar/noobscommunitydiscordbot.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MusicPlayer/GuildMusicManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MusicPlayer/GuildMusicManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MusicPlayer/MusicPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MusicPlayer/MusicPlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MusicPlayer/PlayCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MusicPlayer/PlayCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MusicPlayer/PlayerManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MusicPlayer/PlayerManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MusicPlayer/TrackScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MusicPlayer/TrackScheduler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Commands/HelpMe.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Commands/HelpMe.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/GuildMusicManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MusicPlayer/GuildMusicManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/MusicPlayer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MusicPlayer/MusicPlayer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/PauseCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/PlayCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MusicPlayer/PlayCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/PlayerManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MusicPlayer/PlayerManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/SkipCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/SpotifyRequests.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MusicPlayer/SpotifyRequests.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/StopCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MusicPlayer/TrackScheduler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MusicPlayer/TrackScheduler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/main.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

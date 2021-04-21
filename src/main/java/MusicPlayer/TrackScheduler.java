@@ -1,9 +1,12 @@
 package MusicPlayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -17,6 +20,9 @@ public class TrackScheduler extends AudioEventAdapter {
 
     private final AudioPlayer player;
     private final BlockingQueue<AudioTrack> queue;
+    private Guild guild;
+    private AudioManager audioManager;
+
 
 
     public BlockingQueue<AudioTrack> getQueue() {
@@ -26,10 +32,11 @@ public class TrackScheduler extends AudioEventAdapter {
     /**
      * @param player The audio player this scheduler uses
      */
-    public TrackScheduler(AudioPlayer player) {
+    public TrackScheduler(AudioPlayer player, Guild guild) {
         this.player = player;
         this.queue = new LinkedBlockingQueue<>();
-
+        this.guild= guild;
+        this.audioManager = guild.getAudioManager();
     }
 
     /**
@@ -66,7 +73,12 @@ public class TrackScheduler extends AudioEventAdapter {
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         // Only start the next track if the end reason is suitable for it (FINISHED or LOAD_FAILED)
         if (endReason.mayStartNext) {
-            nextTrack();
+            if(queue.size()==0) {
+                    player.stopTrack();
+                    audioManager.closeAudioConnection();
+            }else{
+                nextTrack();
+            }
         }
     }
 }

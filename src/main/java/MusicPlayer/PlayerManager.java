@@ -37,7 +37,7 @@ public class PlayerManager  {
             long guildId = guild.getIdLong();
             GuildMusicManager musicManager = musicManagerMap.get(guildId);
             if(musicManager == null){
-                musicManager = new GuildMusicManager(playerManager);
+                musicManager = new GuildMusicManager(playerManager,guild);
                 musicManagerMap.put(guildId,musicManager);
             }
             guild.getAudioManager().setSendingHandler(musicManager.getSendHandler());
