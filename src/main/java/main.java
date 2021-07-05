@@ -36,6 +36,7 @@ public class main extends ListenerAdapter {
                                GatewayIntent.GUILD_VOICE_STATES,
                                GatewayIntent.GUILD_MESSAGE_REACTIONS,GatewayIntent.GUILD_MESSAGES)
                 .enableCache(CacheFlag.VOICE_STATE,CacheFlag.MEMBER_OVERRIDES)
+                .enableIntents(GatewayIntent.GUILD_PRESENCES)
 
 
                                 //TO ACCESS MEMBERS CACHE IN GUILD
@@ -56,12 +57,12 @@ public class main extends ListenerAdapter {
         jdaBuilder.addEventListener(new HelpMe());
         jdaBuilder.addEventListener(new ServerInfo());
         jdaBuilder.addEventListener(new GreetUser());
-        jdaBuilder.addEventListener(new SelfDefense());
-
+//        jdaBuilder.addEventListener(new SelfDefense());
+        jdaBuilder.addEventListener(new NubzAppReq());
         jdaBuilder.addEventListener(new PlayCommand());
         jdaBuilder.addEventListener(new QueueCommand());
         jdaBuilder.addEventListener(new MusicPlayer());
-
+        jdaBuilder.addEventListener(new SeekPlayer());
 
         jdaBuilder.addEventListener(new Spam());
         jdaBuilder.addEventListener(new UserInfo());

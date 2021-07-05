@@ -25,7 +25,7 @@ public class HelpMe extends ListenerAdapter {
             //SPAM COMMAND
             embedBuilder.addField("⚡spam","Use To Spam Someone In PM \nspam @mention {message}",false);
             //MUSIC COMMAND
-            embedBuilder.addField("\uD83C\uDFB5Music","To Play Music\n Use NubzMusicRquest,To add a song by typing name/YT URL\nUse NubzMusicPlayer to access player",false);
+            embedBuilder.addField("\uD83C\uDFB5Music","To Play Music\n Use NubzMusicRquest,To add a song by typing name/YT URL\nUse NubzMusicPlayer to access player\nType timestamp to seek the music eg:'1:32'",false);
             //VOTE COMMAND
             embedBuilder.addField("\uD83D\uDDF3Vote","Use To Start A Vote\nmatdan {topic of vote}",false);
 

@@ -18,7 +18,7 @@ public class ServerInfo extends ListenerAdapter {
             embedBuilder.setThumbnail(e.getGuild().getIconUrl());
             embedBuilder.addField("Sarvashaktishali:", e.getGuild().retrieveOwner().complete().getUser().getName(), true);
             embedBuilder.addField("Laundo Ki Sankhyan:", String.valueOf(e.getGuild().getMemberCount()), false);
-            embedBuilder.addField("Zinda Launde:", String.valueOf(e.getGuild().getMembers().size()), false);
+            embedBuilder.addField("Zinda Launde:", String.valueOf(e.getGuild().getMembers().stream().filter(member -> !member.getUser().isBot()).count()), false);
             embedBuilder.addField("Janmadin", e.getGuild().getTimeCreated().toString(), false);
             embedBuilder.addField("Jamin:", e.getGuild().getRegionRaw(), false);
             embedBuilder.addField("Pramanikaran:", e.getGuild().getVerificationLevel().name(), false);

@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.DisconnectEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
@@ -12,13 +13,23 @@ import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEve
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.apache.hc.core5.concurrent.CompletedFuture;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.jws.soap.SOAPBinding;
 import java.awt.*;
-import java.util.Map;
-import java.util.Objects;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -28,8 +39,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MusicPlayer extends ListenerAdapter {
     private String musicPlayerEmbedId;
-    private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
-    private final Map<String, ScheduledFuture<?>> scheduledFutureMap = new ConcurrentHashMap<>();
+    private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+//    private final Map<String, ScheduledFuture<?>> scheduledFutureMap = new ConcurrentHashMap<>();
+    private ScheduledFuture<?> scheduledFuture;
+    private SelfUser mySelf;
+    private javax.swing.Timer repeatForCurrentSongEmbed;
 
     //To Setup
     @Override
@@ -100,13 +114,14 @@ public class MusicPlayer extends ListenerAdapter {
                         break;
 
                     case "⏭":
-                        if(audioManager.isConnected()) {
-                            if (!(audioPlayer.getPlayingTrack() == null)) {
-                                trackScheduler.nextTrack();
-
-                                break;
-                            }
+                        if(trackScheduler.getQueue().isEmpty()){
+                            audioPlayer.stopTrack();
+                            audioManager.closeAudioConnection();
+                        }else {
+                            trackScheduler.nextTrack();
                         }
+                        break;
+
 
                     case "⏹":
                         if(audioManager.isConnected()) {
@@ -127,6 +142,8 @@ public class MusicPlayer extends ListenerAdapter {
             }
         }
     }
+
+
 
     //As i am lazy in order to Do remove reaction properly therefore same when reaction removed :D
     @Override
@@ -161,13 +178,13 @@ public class MusicPlayer extends ListenerAdapter {
                         break;
 
                     case "⏭":
-                        if(audioManager.isConnected()) {
-                            if (!(audioPlayer.getPlayingTrack() == null)) {
-                                trackScheduler.nextTrack();
-
-                                break;
-                            }
+                        if(trackScheduler.getQueue().isEmpty()){
+                            audioPlayer.stopTrack();
+                            audioManager.closeAudioConnection();
+                        }else {
+                            trackScheduler.nextTrack();
                         }
+                        break;
 
                     case "⏹":
                         if(audioManager.isConnected()) {
@@ -175,6 +192,12 @@ public class MusicPlayer extends ListenerAdapter {
                                 audioPlayer.stopTrack();
                                 trackScheduler.clearQueue();
                                 audioManager.closeAudioConnection();
+                                try {
+                                    sendPatchReqCurrentSong("https://nubzapp-default-rtdb.asia-southeast1.firebasedatabase.app/" + event.getGuild().getName().toLowerCase() + ".json",
+                                            "{\"currentsong\":\"" + "None" + "\"}");
+                                }catch(Exception e){
+                                        e.printStackTrace();
+                                }
 
                             }
                         }
@@ -210,25 +233,61 @@ public class MusicPlayer extends ListenerAdapter {
 
     }
 
+    //TO-FIREBASE
+    public static void sendPatchReqCurrentSong(String url, String json) throws Exception {
+
+        String charset = "UTF-8";
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true); // Triggers POST.
+        connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+
+        //THIS SOLUTION WORKS FOR OUR APP USING FIREBASE AS FIREBASE SUPPORTS PATCH REQUEST LIKE THIS ,i.e. OVERRIDING HTTP-METHOD
+        //HERE also a unknown extra entry is not made i.e.here directly inside the guildName then our fields are made/updated.
+
+        try (OutputStream output = connection.getOutputStream()) {
+            output.write(json.getBytes(charset));
+            output.flush();
+        }
+        System.out.println(connection.getResponseCode());
+        connection.disconnect();
 
 
+    }
 
 
     //To Create A MusicPlayer
     @Override
     public void onGuildVoiceJoin(@Nonnull GuildVoiceJoinEvent event) {
         super.onGuildVoiceJoin(event);
+        PlayerManager playerManager = PlayerManager.getINSTANCE();
+        GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
+        AudioPlayer audioPlayer = guildMusicManager.player;
+        AudioManager audioManager = event.getGuild().getAudioManager();
+        TrackScheduler trackScheduler = guildMusicManager.scheduler;
         Member selfMember = event.getGuild().getSelfMember();
         GuildVoiceState guildVoiceState = selfMember.getVoiceState();
+        mySelf= event.getJDA().getSelfUser();
+
+        //CHECKS IF QUEUE IS EMPTY IF YES THEN CLOSES THE BOT CONNECTION FROM VC
+        Timer t = new java.util.Timer();
+        t.schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        if(trackScheduler.getQueue().isEmpty() && audioPlayer.getPlayingTrack()==null){
+                            audioManager.closeAudioConnection();
+                        }
+                        //TO AVOID THREAD LEAKAGE
+                        t.cancel();
+                    }
+                },
+                2000  //in ms
+        );
+
 
         assert guildVoiceState != null;
         if (guildVoiceState.inVoiceChannel()) {
-            PlayerManager playerManager = PlayerManager.getINSTANCE();
-            GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
-            AudioPlayer audioPlayer = guildMusicManager.player;
-            AudioManager audioManager = event.getGuild().getAudioManager();
-            TrackScheduler trackScheduler = new TrackScheduler(audioPlayer,event.getGuild());
-
 
           TextChannel tchannel;
 
@@ -239,8 +298,6 @@ public class MusicPlayer extends ListenerAdapter {
 
             }
 
-
-
             try {
 
                 TextChannel finalTchannel = tchannel;
@@ -249,16 +306,32 @@ public class MusicPlayer extends ListenerAdapter {
                 AtomicReference<String> lastPlayedSong = new AtomicReference<>("NULL");
 
                 //THREAD-POOL To Get Current playing music in tchannel
-                 ScheduledFuture<?> scheduledFuture = executor.scheduleWithFixedDelay(() -> {
-
+                repeatForCurrentSongEmbed = new javax.swing.Timer(1000, null);
+                repeatForCurrentSongEmbed.addActionListener(e -> {
                     //TO CHECK WHEATHER THERE ARE MEMBERS IN VOICE CHANNEL LISTENING TO SONG
-                     if(event.getChannelJoined().getMembers().size()==1){
-//                        audioPlayer.stopTrack();    //Stops the track    CLEARS QUE IF SWITCHTED CHANNEL
+                    if(event.getChannelJoined().getMembers().size()==1){
+
                         audioManager.closeAudioConnection();//Disconnect From Channel
 
-                     }
+                    }
 
-                     //To Check ,if Song changes
+                    try {
+                        //AS the getTitle method takes time to give value ,we using completeableFuture
+                        CompletableFuture<String> songName = new CompletableFuture<>();
+                        try {
+                            songName.complete(audioPlayer.getPlayingTrack().getInfo().title);
+                        }
+                        catch(NullPointerException e2){
+                            //DO NOTHING
+                        }
+                        sendPatchReqCurrentSong("https://nubzapp-default-rtdb.asia-southeast1.firebasedatabase.app/" + event.getGuild().getName().toLowerCase() + ".json",
+                                "{\"currentsong\":\"" + songName.get() + "\"}");
+
+                    }catch(Exception e1 ){
+                        e1.printStackTrace();
+                    }
+
+                    //To Check ,if Song changes
                     if (!(lastPlayedSong.get().equalsIgnoreCase(audioPlayer.getPlayingTrack().getInfo().title))) {
                         lastPlayedSong.set(audioPlayer.getPlayingTrack().getInfo().title);
                         try {
@@ -266,9 +339,19 @@ public class MusicPlayer extends ListenerAdapter {
                             musicPlayer.setTitle("Currently Playing/Last Played");
                             musicPlayer.addField("Song:", lastPlayedSong.get(), false);
                             musicPlayer.setColor(Color.CYAN);
+
+                            //Changes Bots Name //CAUSING PROBLEM TO FEW USERS
+
+//                            try {
+//                                Objects.requireNonNull(event.getGuild().getMember(mySelf)).modifyNickname(lastPlayedSong.get().substring(0, 32)).complete();
+//                            }catch(NullPointerException e){
+//                                System.out.println("MusicPlayer ModifyName NullException");
+//                            }
+
                             finalTchannel.sendMessage(musicPlayer.build()).queue();
 
-                                //Deleting old msg if exists in that tchannel
+
+                            //Deleting old msg if exists in that tchannel
                             if(!(finalTchannel.getLatestMessageId().equals(musicPlayerEmbedId))) {
                                 finalTchannel.deleteMessageById(finalTchannel.getLatestMessageId()).queue();
                             }
@@ -281,9 +364,13 @@ public class MusicPlayer extends ListenerAdapter {
                             finalTchannel.sendMessage("Not Playing Anything!").queue();
                         }
                     }
-                }, 1, 1, TimeUnit.SECONDS);
+                });
 
-                 scheduledFutureMap.put(event.getChannelJoined().getId(), scheduledFuture);
+                repeatForCurrentSongEmbed.setRepeats(true);
+                repeatForCurrentSongEmbed.setDelay(1000); //1 sec
+                repeatForCurrentSongEmbed.start();
+
+
 
             } catch (NullPointerException e) {
                 System.out.println("MusicPlayer:No Track is playing..");
@@ -295,23 +382,71 @@ public class MusicPlayer extends ListenerAdapter {
     @Override
     public void onGuildVoiceLeave(@Nonnull GuildVoiceLeaveEvent event) {
         super.onGuildVoiceLeave(event);
+        AudioManager audioManager = event.getGuild().getAudioManager();
+        PlayerManager playerManager = PlayerManager.getINSTANCE();
+        GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
+        AudioPlayer audioPlayer = guildMusicManager.player;
+        TrackScheduler trackScheduler = new TrackScheduler(audioPlayer,event.getGuild());
+
+        //WRITE CODE TO see if queue is zero or not if zero then set current song value to none
+        if(trackScheduler.getQueue().isEmpty() && event.getMember().equals(event.getGuild().getSelfMember()) ){
+            try {
+                sendPatchReqCurrentSong("https://nubzapp-default-rtdb.asia-southeast1.firebasedatabase.app/" + event.getGuild().getName().toLowerCase() + ".json",
+                        "{\"currentsong\":\"" + "None" + "\"}");
+                try {
+
+//                    repeatForCurrentSongEmbed.stop();
+
+                }catch(NullPointerException e){
+                    e.printStackTrace();
+                }
+
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        
         if(event.getChannelLeft().getMembers().size() == 1 && Objects.requireNonNull(event.getGuild().getSelfMember().getVoiceState()).inVoiceChannel()){
-            AudioManager audioManager = event.getGuild().getAudioManager();
-            scheduledFutureMap.get(event.getChannelLeft().getId()).cancel(true);
-            audioManager.closeAudioConnection();
+          try {
+
+              try {
+
+//                  repeatForCurrentSongEmbed.stop();
+
+              }catch(NullPointerException e){
+                  e.printStackTrace();
+              }
+              audioManager.closeAudioConnection();
+          }catch(Exception e){
+              e.printStackTrace();
+          }
 
 
         }
-        if((event.getMember().equals(event.getGuild().getSelfMember()))) {
+        if(event.getMember()==event.getGuild().getSelfMember()){
+            try {
 
-            scheduledFutureMap.get(event.getChannelLeft().getId()).cancel(true);
+//                repeatForCurrentSongEmbed.stop();
+            }catch(NullPointerException e){
+                e.printStackTrace();
+            }
+
         }
 
 
     }
 
+    @Override
+    public void onDisconnect(@NotNull DisconnectEvent event) {
+        super.onDisconnect(event);
+        try{
 
+//            repeatForCurrentSongEmbed.stop();
 
+        }catch(NullPointerException  e){
+            e.printStackTrace();
 
+        }
 
+    }
 }

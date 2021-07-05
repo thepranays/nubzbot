@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 //v1.0
@@ -67,6 +68,7 @@ public class TrackScheduler extends AudioEventAdapter {
     //To Clear The queue in Track-scheduler
     public void clearQueue(){
         this.queue.clear();
+
     }
 
     @Override
@@ -75,6 +77,7 @@ public class TrackScheduler extends AudioEventAdapter {
         if (endReason.mayStartNext) {
             if(queue.size()==0) {
                     player.stopTrack();
+
                     audioManager.closeAudioConnection();
             }else{
                 nextTrack();

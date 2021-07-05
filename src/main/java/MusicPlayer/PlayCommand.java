@@ -7,6 +7,7 @@ import com.google.api.services.youtube.model.SearchResult;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.tools.io.SeekableInputStream;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.model_objects.specification.Paging;
 import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
@@ -15,10 +16,12 @@ import com.wrapper.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 
+import net.dv8tion.jda.api.events.DisconnectEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.net.MalformedURLException;
@@ -58,7 +61,7 @@ public class PlayCommand extends ListenerAdapter {
 
 
 
-    private void joinChannel(GuildMessageReceivedEvent event,String inputReceived){
+    private void joinChannel(GuildMessageReceivedEvent event,String inputReceived,Member voiceRecoUser,boolean onReco){
         PlayerManager playerManager = PlayerManager.getINSTANCE();
         TextChannel channel = event.getChannel();
         AudioManager audioManager = event.getGuild().getAudioManager();
@@ -68,8 +71,26 @@ public class PlayCommand extends ListenerAdapter {
         VoiceChannel voiceChannel = memberVoiceState.getChannel();
         Member selfMember = event.getGuild().getSelfMember();
 
-        audioManager.openAudioConnection(voiceChannel);
-        
+        if(!memberVoiceState.inVoiceChannel()){
+            if(!(voiceRecoUser==null)){
+                if(onReco) {
+                    GuildVoiceState memberVoiceStateReco = voiceRecoUser.getVoiceState();
+                    VoiceChannel voiceChannelReco = memberVoiceStateReco.getChannel();
+                    audioManager.openAudioConnection(voiceChannelReco);
+                }
+            }
+        }else {
+
+            audioManager.openAudioConnection(voiceChannel);
+
+            //Check whether user  is in channel or not
+            if (!(memberVoiceState.inVoiceChannel())) {
+                channel.sendMessage("Bhai Channel Join Karle Pehle..").queue();
+                return;
+            }
+
+        }
+
 
         if (audioManager.isConnected()) {
             //TO CHECK WHEATHER SONG IS PLAYING OR NOT SO TO GET KNOW CONNECTED + PLAYING STATUS
@@ -96,37 +117,106 @@ public class PlayCommand extends ListenerAdapter {
         }
 
 
-        //Check whether user  is in channel or not
-        if (!(memberVoiceState.inVoiceChannel())) {
-            channel.sendMessage("Bhai Channel Join Karle Pehle..").queue();
+
+
+    }
+
+
+    private void joinChannel(GuildMessageReceivedEvent event,String inputReceived){
+        PlayerManager playerManager = PlayerManager.getINSTANCE();
+        TextChannel channel = event.getChannel();
+        AudioManager audioManager = event.getGuild().getAudioManager();
+        GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
+        AudioPlayer audioPlayer =guildMusicManager.player;
+        GuildVoiceState memberVoiceState = event.getMember().getVoiceState();
+        VoiceChannel voiceChannel = memberVoiceState.getChannel();
+        Member selfMember = event.getGuild().getSelfMember();
+
+        audioManager.openAudioConnection(voiceChannel);
+
+
+
+
+        if (audioManager.isConnected()) {
+            //TO CHECK WHEATHER SONG IS PLAYING OR NOT SO TO GET KNOW CONNECTED + PLAYING STATUS
+            //SO THAT OUT MESSAGE DNT REPEAT
+            if(!(audioPlayer.getPlayingTrack()==null)) {
+
+
+
+                //CHECK WHEATHER THE INPUT MESSAGE IS URL OR NORMAL SEARCH and plays the song
+                play(inputReceived,playerManager,channel,event);
+            }else{
+
+                //CHECK WHEATHER THE INPUT MESSAGE IS URL OR NORMAL SEARCH
+                play(inputReceived,playerManager,channel,event);
+            }
             return;
+
         }
+
+        else{
+
+            //CHECK WHEATHER THE INPUT MESSAGE IS URL OR NORMAL SEARCH
+            play(inputReceived,playerManager,channel,event);
+        }
+
+
 
         //Check for permission
         if (!selfMember.hasPermission(voiceChannel, Permission.VOICE_CONNECT)) {
             channel.sendMessageFormat("Meri awkaad nhi hai join karne ki %s", voiceChannel).queue();
 
         }
+        //Check whether user  is in channel or not
+        if (!(memberVoiceState.inVoiceChannel())) {
+            channel.sendMessage("Bhai Channel Join Karle Pehle..").queue();
+            return;
+        }
+
 
 
     }
 
+
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
         String inputRawString = e.getMessage().getContentRaw();
-        Member selfMember = e.getGuild().getSelfMember();
+
 
         //Youtube
         try {
-            if(!(Objects.equals(e.getMessage().getMember(), selfMember))) {
                 if (e.getChannel().getName().equalsIgnoreCase("NubzMusicRequest")) {
-                    joinChannel(e, inputRawString);
+
+                    String[] songNameOnly = inputRawString.split("@");
+                    try {
+                        //FOr VoiceReco Through App
+                        if(e.getMessage().getMember() == e.getGuild().getSelfMember()) {
+                            if (!(e.getMessage().getMentionedMembers().get(0) == null)) {
+                                if(e.getMessage().getContentRaw().startsWith("<@")){
+                                     //Ignore As Only MentionedMember String is put in songreq
+                                }else {
+                                    joinChannel(e, songNameOnly[0], e.getMessage().getMentionedMembers().get(0), true);
+                                }
+                            }
+
+                        }
+                        //If user manually enters song
+                        if(!(e.getMember().equals(e.getGuild().getSelfMember()))){
+                            joinChannel(e, songNameOnly[0]);
+                        }
+
+                    }catch(IndexOutOfBoundsException excep){
+                        //If user manually enters song
+                        if(!(e.getMember().equals(e.getGuild().getSelfMember()))){
+                            joinChannel(e, songNameOnly[0]);
+                        }
+
+                    }
+
+
                     PlayerManager playerManager = PlayerManager.getINSTANCE();
                     playerManager.getGuildMusicManger(e.getGuild()).player.setVolume(100);
 
-//                e.getChannel().sendMessage("Playing Gaana :D").queue();
-
-
-                }
             }
         }catch(NullPointerException NullPointer){
           e.getChannel().sendMessage("Type 'nubzsetup' first").queue();

@@ -25,6 +25,7 @@ public class SelfDefense extends ListenerAdapter {
         List<AuditLogEntry> auditLogEntryList = auditLogEntries.complete();
         if(auditLogEntryList.get(0).getType().toString().equals("MEMBER_VOICE_KICK") && event.getMember().getUser().getId().equals("246511799464099840")){
                            try {
+
                                User sinUser = auditLogEntryList.get(0).getUser();
                                Member sinMember = event.getGuild().getMember(sinUser);
                                event.getGuild().kickVoiceMember(sinMember).complete();
@@ -37,7 +38,7 @@ public class SelfDefense extends ListenerAdapter {
 
 
 
-                           }catch(NullPointerException e){
+                           }catch(IllegalStateException e){
                                System.out.println("Caught Null pointer in selfdefense");
                            }
         }
