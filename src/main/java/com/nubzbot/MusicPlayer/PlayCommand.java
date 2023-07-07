@@ -215,7 +215,6 @@ public class PlayCommand extends ListenerAdapter {
 
                     }
 
-
                     PlayerManager playerManager = PlayerManager.getINSTANCE();
                     playerManager.getGuildMusicManger(e.getGuild()).player.setVolume(100);
 
@@ -223,8 +222,6 @@ public class PlayCommand extends ListenerAdapter {
         }catch(NullPointerException NullPointer){
           e.getChannel().sendMessage("Type 'nubzsetup' first").queue();
         }
-
-
 
     }
 
