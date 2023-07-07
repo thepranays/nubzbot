@@ -27,13 +27,15 @@ import java.util.List;
 public class PlayCommand extends ListenerAdapter {
     private final YouTube youTube;
     private TextChannel tchannel;
+    private String ytAPIKey;
 
 
 
 
 
     //CONSTRUCTOR USED TO MAKE YOUTUBE API BUILDER
-    public PlayCommand(){
+    public PlayCommand(String ytAPIKey){
+        this.ytAPIKey=ytAPIKey;
         //Connect To YOUTUBE-API
         YouTube youTubeTemp = null;
         try{
@@ -126,7 +128,7 @@ public class PlayCommand extends ListenerAdapter {
 
 
             System.out.println("User not in channel");;
-    
+
 
 
 
@@ -286,7 +288,7 @@ public class PlayCommand extends ListenerAdapter {
 
    //YOUTUBE API SEARCH AND RETURN VIDEOID
     @Nullable
-    private String youtubeAPISearch(String input){
+    private String youtubeAPISearch(String input ){
         try{
             List<SearchResult> results = youTube.search()
                     .list("id,snippet")
@@ -294,7 +296,7 @@ public class PlayCommand extends ListenerAdapter {
                     .setMaxResults(1L)
                     .setType("video")
                     .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
-                    .setKey("")
+                    .setKey(this.ytAPIKey)
                     .execute()
                     .getItems();
             if(!results.isEmpty()){

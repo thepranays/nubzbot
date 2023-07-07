@@ -9,6 +9,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import io.github.cdimascio.dotenv.Dotenv;
+
+
 
 //AQBIJeQQ_-Cl2LhdLUJBSBuVG0ilTqKEUpX_fs85o_qnkwQwIVp3w44CJ7q_AvFaewKcJSPYrkJrnVYzKjEjttnt1mYHUsw1v_3Zkp7Z26A7djdkDKrFF8Wn1s_m5aUWmKSbSfJA_-JG6l0oIubxEe2XTZiSRPOaZBFbFOrC7ieCCA
 
@@ -76,15 +79,19 @@ v1.0
 public class main extends ListenerAdapter {
 
     public static void main(String[] args) throws Exception {
-        launchBot();
+        Dotenv  dotenv =  Dotenv.load();
+        String discordAPIKey = dotenv.get("DISCORD_KEY");
+        String ytAPIKey = dotenv.get("YT_KEY");
+
+        launchBot(discordAPIKey,ytAPIKey);
 
 
     }
 
     ///////////LAUNCH-BOT CONTAINS API CONNECTION AND INTEGRATION OF FEATURES//////
-    private static void launchBot() throws Exception {
+    private static void launchBot(String discordAPIKey,String ytAPIKey) throws Exception {
         //CONNECT TO DISCORD API
-        JDA jdaBuilder = JDABuilder.createDefault("")
+        JDA jdaBuilder = JDABuilder.createDefault(discordAPIKey)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_VOICE_STATES,
                         GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_MESSAGES)
@@ -106,7 +113,7 @@ public class main extends ListenerAdapter {
         jdaBuilder.addEventListener(new GreetUser());
 //        jdaBuilder.addEventListener(new SelfDefense());
         jdaBuilder.addEventListener(new NubzAppReq());
-        jdaBuilder.addEventListener(new PlayCommand());
+        jdaBuilder.addEventListener(new PlayCommand(ytAPIKey));
         jdaBuilder.addEventListener(new QueueCommand());
         jdaBuilder.addEventListener(new MusicPlayer());
         jdaBuilder.addEventListener(new SeekPlayer());
