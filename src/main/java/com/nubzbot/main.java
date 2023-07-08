@@ -83,7 +83,7 @@ public class main extends ListenerAdapter {
 //        String discordAPIKey = dotenv.get("DISCORD_KEY");
 //        String ytAPIKey = dotenv.get("YT_KEY");
 //        System.out.println(System.getenv("DISCORD_KEY"));
-//        System.out.println(System.getenv("YT_KEY"));
+//        System.out.println(System.getenv("YT_KEY"))
         String discordAPIKey = System.getenv("DISCORD_KEY");
         String ytAPIKey =System.getenv("YT_KEY");
         launchBot(discordAPIKey,ytAPIKey);
