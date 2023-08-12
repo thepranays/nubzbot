@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import java.awt.*;
 
@@ -25,7 +26,7 @@ public class Vote extends ListenerAdapter {
                     votePage.setTitle(voteTopic);
                     votePage.setDescription("MATDAN BY:"+e.getAuthor().getName());
                     votePage.setColor(Color.CYAN);
-                    e.getChannel().sendMessage((CharSequence) votePage.build()).queue(message -> {
+                    e.getChannel().sendMessage(MessageCreateData.fromEmbeds(votePage.build())).queue(message -> {
 //                        message.addReaction("✅").queue();
 //                        message.addReaction("❌").queue();
                         message.addReaction(Emoji.fromFormatted("✅")).queue();
