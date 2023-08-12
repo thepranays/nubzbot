@@ -2,9 +2,10 @@ package com.nubzbot.Events;
 
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
+
 import net.dv8tion.jda.api.entities.User;
 
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 
 
@@ -37,7 +38,8 @@ public class GreetUser extends ListenerAdapter {
         embedNewMemberJoined.setImage(newUserJoined.getAvatarUrl());
         embedNewMemberJoined.setColor(Color.CYAN);
 
-        textChannel.sendMessage(embedNewMemberJoined.build()).queue();
+//        textChannel.sendMessage(embedNewMemberJoined.build()).queue();
+        textChannel.sendMessage((CharSequence) embedNewMemberJoined.build()).queue();
 
     }
 
@@ -64,6 +66,6 @@ public class GreetUser extends ListenerAdapter {
         embedNewMemberJoined.setImage(userLeft.getAvatarUrl());
         embedNewMemberJoined.setColor(Color.CYAN);
 
-        textChannel.sendMessage(embedNewMemberJoined.build()).queue();
+        textChannel.sendMessage((CharSequence) embedNewMemberJoined.build()).queue();
     }
 }

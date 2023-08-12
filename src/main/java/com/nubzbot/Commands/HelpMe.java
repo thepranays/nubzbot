@@ -2,8 +2,11 @@ package com.nubzbot.Commands;
 
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import java.awt.*;
 import java.util.Objects;
@@ -14,7 +17,8 @@ public class HelpMe extends ListenerAdapter {
 
     //v1.0
 
-    public void onGuildMessageReceived(GuildMessageReceivedEvent e){
+    public void onMessageReceived(MessageReceivedEvent e){
+        if (!e.isFromGuild()) return;
         String[] inputFound = e.getMessage().getContentRaw().split(" ");
         if(inputFound[0].equalsIgnoreCase("helpme")){
             EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -29,12 +33,12 @@ public class HelpMe extends ListenerAdapter {
             //VOTE COMMAND
             embedBuilder.addField("\uD83D\uDDF3Vote","Use To Start A Vote\nmatdan {topic of vote}",false);
 
-            System.out.println("Id"+ Objects.requireNonNull(e.getMember()).getId());
+//            System.out.println("Id"+ Objects.requireNonNull(e.getMember()).getId());
 
 
 
             embedBuilder.setColor(Color.CYAN);
-            e.getChannel().sendMessage(embedBuilder.build()).queue();
+            e.getChannel().sendMessage(MessageCreateData.fromEmbeds(embedBuilder.build())).queue();
 
         }
 

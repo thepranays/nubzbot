@@ -4,16 +4,19 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.DisconnectEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.api.events.session.SessionDisconnectEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -42,8 +45,9 @@ public class MusicPlayer extends ListenerAdapter {
 
     //To Setup
     @Override
-    public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent e) {
+    public void onMessageReceived (@Nonnull MessageReceivedEvent e) {
 
+        if (!e.isFromGuild()) return;
         if(!(Objects.equals(e.getMember(), e.getGuild().getSelfMember()))){
                 if (e.getMessage().getContentRaw().equalsIgnoreCase("nubzsetup")) {
 
@@ -78,8 +82,8 @@ public class MusicPlayer extends ListenerAdapter {
 
     //When Member Access The MusicPlayerFeature
     @Override
-    public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
-        super.onGuildMessageReactionAdd(event);
+    public void onMessageReactionAdd(@Nonnull MessageReactionAddEvent event) {
+        super.onMessageReactionAdd(event);
         PlayerManager playerManager = PlayerManager.getINSTANCE();
         AudioManager audioManager = event.getGuild().getAudioManager();
         GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
@@ -90,7 +94,7 @@ public class MusicPlayer extends ListenerAdapter {
 
         if(!event.getMember().equals(event.getGuild().getSelfMember())){
             if(event.getChannel().getName().equalsIgnoreCase("nubzmusicplayer")){
-                switch(event.getReaction().getReactionEmote().getEmoji()){
+                switch(event.getReaction().getEmoji().getFormatted()){
                     case "⏸":
                         if(audioManager.isConnected()) {
                             if (!(audioPlayer.getPlayingTrack() == null)) {
@@ -142,8 +146,8 @@ public class MusicPlayer extends ListenerAdapter {
 
     //As i am lazy in order to Do remove reaction properly therefore same when reaction removed :D
     @Override
-    public void onGuildMessageReactionRemove(@Nonnull GuildMessageReactionRemoveEvent event) {
-        super.onGuildMessageReactionRemove(event);
+    public void onMessageReactionRemove(@Nonnull MessageReactionRemoveEvent event) {
+        super.onMessageReactionRemove(event);
         PlayerManager playerManager = PlayerManager.getINSTANCE();
         AudioManager audioManager = event.getGuild().getAudioManager();
         GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
@@ -153,7 +157,7 @@ public class MusicPlayer extends ListenerAdapter {
 
         if(!Objects.equals(event.getMember(), event.getGuild().getSelfMember())){
             if(event.getChannel().getName().equalsIgnoreCase("nubzmusicplayer")){
-                switch(event.getReaction().getReactionEmote().getEmoji()){
+                switch(event.getReaction().getEmoji().getFormatted()){
                     case "⏸":
                         if(audioManager.isConnected()) {
                             if (!(audioPlayer.getPlayingTrack() == null)) {
@@ -187,12 +191,12 @@ public class MusicPlayer extends ListenerAdapter {
                                 audioPlayer.stopTrack();
                                 trackScheduler.clearQueue();
                                 audioManager.closeAudioConnection();
-                                try {
-                                    sendPatchReqCurrentSong("https://nubzapp-default-rtdb.asia-southeast1.firebasedatabase.app/" + event.getGuild().getName().toLowerCase() + ".json",
-                                            "{\"currentsong\":\"" + "None" + "\"}");
-                                }catch(Exception e){
-                                        e.printStackTrace();
-                                }
+//                                try {
+//                                    sendPatchReqCurrentSong("https://nubzapp-default-rtdb.asia-southeast1.firebasedatabase.app/" + event.getGuild().getName().toLowerCase() + ".json",
+//                                            "{\"currentsong\":\"" + "None" + "\"}");
+//                                }catch(Exception e){
+//                                        e.printStackTrace();
+//                                }
 
                             }
                         }
@@ -211,15 +215,18 @@ public class MusicPlayer extends ListenerAdapter {
     //Create Player
     private void createPlayer(Guild guild){
         EmbedBuilder player = new EmbedBuilder();
-        player.setTitle(guild.getName()+"'s com.nubzbot.MusicPlayer");
+        player.setTitle(guild.getName()+"'s MusicPlayer");
         player.setImage(guild.getIconUrl());
         player.setColor(Color.RED);
-        guild.getTextChannelsByName("NubzMusicPlayer",true).get(0).sendMessage(player.build()).queue((message -> {
-            message.addReaction("⏸").queue();
-            message.addReaction("▶").queue();
-            message.addReaction("⏹").queue();
-            message.addReaction("⏭").queue();
-
+        guild.getTextChannelsByName("NubzMusicPlayer",true).get(0).sendMessage((MessageCreateData.fromEmbeds(player.build())) ).queue((message -> {
+//            message.addReaction("⏸").queue();
+//            message.addReaction("▶").queue();
+//            message.addReaction("⏹").queue();
+//            message.addReaction("⏭").queue();
+            message.addReaction(Emoji.fromFormatted("⏸")).queue();
+            message.addReaction(Emoji.fromFormatted("▶")).queue();
+            message.addReaction(Emoji.fromFormatted("⏹")).queue();
+            message.addReaction(Emoji.fromFormatted("⏭")).queue();
             //STORE EmbedMessageId in global variable
             this.musicPlayerEmbedId = message.getId();
 
@@ -228,32 +235,35 @@ public class MusicPlayer extends ListenerAdapter {
 
     }
 
-    //TO-FIREBASE
-    public static void sendPatchReqCurrentSong(String url, String json) throws Exception {
-
-        String charset = "UTF-8";
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.setRequestMethod("POST");
-        connection.setDoOutput(true); // Triggers POST.
-        connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
-
-        //THIS SOLUTION WORKS FOR OUR APP USING FIREBASE AS FIREBASE SUPPORTS PATCH REQUEST LIKE THIS ,i.e. OVERRIDING HTTP-METHOD
-        //HERE also a unknown extra entry is not made i.e.here directly inside the guildName then our fields are made/updated.
-
-        try (OutputStream output = connection.getOutputStream()) {
-            output.write(json.getBytes(charset));
-            output.flush();
-        }
-        connection.disconnect();
-
-
-    }
+    //TO-FIREBASE // used for mobile app //now deprecated
+//    public static void sendPatchReqCurrentSong(String url, String json) throws Exception {
+//
+//        String charset = "UTF-8";
+//        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+//        connection.setRequestMethod("POST");
+//        connection.setDoOutput(true); // Triggers POST.
+//        connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+//
+//        //THIS SOLUTION WORKS FOR OUR APP USING FIREBASE AS FIREBASE SUPPORTS PATCH REQUEST LIKE THIS ,i.e. OVERRIDING HTTP-METHOD
+//        //HERE also a unknown extra entry is not made i.e.here directly inside the guildName then our fields are made/updated.
+//
+//        try (OutputStream output = connection.getOutputStream()) {
+//            output.write(json.getBytes(charset));
+//            output.flush();
+//        }
+//        connection.disconnect();
+//
+//
+//    }
 
 
     //To Create A com.nubzbot.MusicPlayer
-    @Override
-    public void onGuildVoiceJoin(@Nonnull GuildVoiceJoinEvent event) {
-        super.onGuildVoiceJoin(event);
+
+    public void onGuildVoiceJoin(GuildVoiceUpdateEvent event) {
+        super.onGuildVoiceUpdate(event);
+
+        if(event.getChannelJoined()==null) return; //if disconnected event
+
         PlayerManager playerManager = PlayerManager.getINSTANCE();
         GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
         AudioPlayer audioPlayer = guildMusicManager.player;
@@ -281,14 +291,15 @@ public class MusicPlayer extends ListenerAdapter {
 
 
         assert guildVoiceState != null;
-        if (guildVoiceState.inVoiceChannel()) {
+        if (guildVoiceState.inAudioChannel()) {
 
           TextChannel tchannel;
 
             try {
-                tchannel = event.getGuild().getTextChannelsByName("NubzMusicPlayer", true).get(0);
+                tchannel = event.getGuild().getTextChannelsByName("nubzmusicplayer", true).get(0);
+
             } catch (IndexOutOfBoundsException n) {
-                tchannel = event.getGuild().createTextChannel("NubzMusicPlayer").complete();
+                tchannel = event.getGuild().createTextChannel("nubzmusicplayer").complete();
 
             }
 
@@ -318,15 +329,15 @@ public class MusicPlayer extends ListenerAdapter {
                         catch(NullPointerException e2){
                             //DO NOTHING
                         }
-                        sendPatchReqCurrentSong("https://nubzapp-default-rtdb.asia-southeast1.firebasedatabase.app/" + event.getGuild().getName().toLowerCase() + ".json",
-                                "{\"currentsong\":\"" + songName.get() + "\"}");
+//                        sendPatchReqCurrentSong("https://nubzapp-default-rtdb.asia-southeast1.firebasedatabase.app/" + event.getGuild().getName().toLowerCase() + ".json",
+//                                "{\"currentsong\":\"" + songName.get() + "\"}");
 
                     }catch(Exception e1 ){
                         e1.printStackTrace();
                     }
 
                     //To Check ,if Song changes
-                    if (!(lastPlayedSong.get().equalsIgnoreCase(audioPlayer.getPlayingTrack().getInfo().title))) {
+                    if (lastPlayedSong.get() != null && !(lastPlayedSong.get().equalsIgnoreCase(audioPlayer.getPlayingTrack().getInfo().title))) {
                         lastPlayedSong.set(audioPlayer.getPlayingTrack().getInfo().title);
                         try {
                             EmbedBuilder musicPlayer = new EmbedBuilder();
@@ -342,7 +353,7 @@ public class MusicPlayer extends ListenerAdapter {
 //                                System.out.println("com.nubzbot.MusicPlayer ModifyName NullException");
 //                            }
 
-                            finalTchannel.sendMessage(musicPlayer.build()).queue();
+                            finalTchannel.sendMessage((MessageCreateData.fromEmbeds(musicPlayer.build()))).queue();
 
 
                             //Deleting old msg if exists in that tchannel
@@ -373,9 +384,17 @@ public class MusicPlayer extends ListenerAdapter {
     }
 
 
+
+    //FOR; User leaves channel when bot playing song
     @Override
-    public void onGuildVoiceLeave(@Nonnull GuildVoiceLeaveEvent event) {
-        super.onGuildVoiceLeave(event);
+    public void onGuildVoiceUpdate(@Nonnull GuildVoiceUpdateEvent event) {
+        super.onGuildVoiceUpdate(event);
+        if(event.getChannelLeft()==null) {
+
+            onGuildVoiceJoin(event);
+            return;
+        }//if connected to voice channel event
+
         AudioManager audioManager = event.getGuild().getAudioManager();
         PlayerManager playerManager = PlayerManager.getINSTANCE();
         GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
@@ -383,33 +402,25 @@ public class MusicPlayer extends ListenerAdapter {
         TrackScheduler trackScheduler = new TrackScheduler(audioPlayer,event.getGuild());
 
         //WRITE CODE TO see if queue is zero or not if zero then set current song value to none
-        if(trackScheduler.getQueue().isEmpty() && event.getMember().equals(event.getGuild().getSelfMember()) ){
-            try {
-                sendPatchReqCurrentSong("https://nubzapp-default-rtdb.asia-southeast1.firebasedatabase.app/" + event.getGuild().getName().toLowerCase() + ".json",
-                        "{\"currentsong\":\"" + "None" + "\"}");
-                try {
-
-//                    repeatForCurrentSongEmbed.stop();
-
-                }catch(NullPointerException e){
-                    e.printStackTrace();
-                }
-
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }
+//        if(trackScheduler.getQueue().isEmpty() && event.getMember().equals(event.getGuild().getSelfMember()) ){
+//            try {
+//                sendPatchReqCurrentSong("https://nubzapp-default-rtdb.asia-southeast1.firebasedatabase.app/" + event.getGuild().getName().toLowerCase() + ".json",
+//                        "{\"currentsong\":\"" + "None" + "\"}");
+//                try {
+//
+////                    repeatForCurrentSongEmbed.stop();
+//
+//                }catch(NullPointerException e){
+//                    e.printStackTrace();
+//                }
+//
+//            }catch(Exception e){
+//                e.printStackTrace();
+//            }
+//        }
         
-        if(event.getChannelLeft().getMembers().size() == 1 && Objects.requireNonNull(event.getGuild().getSelfMember().getVoiceState()).inVoiceChannel()){
+        if(event.getChannelLeft().getMembers().size() == 1 && Objects.requireNonNull(event.getGuild().getSelfMember().getVoiceState()).inAudioChannel()){
           try {
-
-              try {
-
-//                  repeatForCurrentSongEmbed.stop();
-
-              }catch(NullPointerException e){
-                  e.printStackTrace();
-              }
               audioManager.closeAudioConnection();
           }catch(Exception e){
               e.printStackTrace();
@@ -417,22 +428,14 @@ public class MusicPlayer extends ListenerAdapter {
 
 
         }
-        if(event.getMember()==event.getGuild().getSelfMember()){
-            try {
 
-//                repeatForCurrentSongEmbed.stop();
-            }catch(NullPointerException e){
-                e.printStackTrace();
-            }
-
-        }
 
 
     }
 
     @Override
-    public void onDisconnect(@NotNull DisconnectEvent event) {
-        super.onDisconnect(event);
+    public void onSessionDisconnect(@NotNull SessionDisconnectEvent event) {
+        super.onSessionDisconnect(event);
         try{
 
 //            repeatForCurrentSongEmbed.stop();

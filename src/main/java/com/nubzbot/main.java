@@ -97,7 +97,7 @@ public class main extends ListenerAdapter {
         JDA jdaBuilder = JDABuilder.createDefault(discordAPIKey)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_VOICE_STATES,
-                        GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_MESSAGES)
+                        GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_MESSAGES,GatewayIntent.MESSAGE_CONTENT)
                 .enableCache(CacheFlag.VOICE_STATE, CacheFlag.MEMBER_OVERRIDES)
                 .enableIntents(GatewayIntent.GUILD_PRESENCES)
 
