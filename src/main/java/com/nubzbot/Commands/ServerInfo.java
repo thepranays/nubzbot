@@ -1,15 +1,18 @@
 package com.nubzbot.Commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import java.awt.*;
 
 
 public class ServerInfo extends ListenerAdapter {
-
-    public synchronized void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+    @Override
+    public  void onMessageReceived(MessageReceivedEvent e) {
+        if (!e.isFromGuild()) return;
         String[] inputFound = e.getMessage().getContentRaw().split(" ");
         if (inputFound[0].equalsIgnoreCase("serverinfo")) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -20,12 +23,12 @@ public class ServerInfo extends ListenerAdapter {
             embedBuilder.addField("Laundo Ki Sankhyan:", String.valueOf(e.getGuild().getMemberCount()), false);
             embedBuilder.addField("Zinda Launde:", String.valueOf(e.getGuild().getMembers().stream().filter(member -> !member.getUser().isBot()).count()), false);
             embedBuilder.addField("Janmadin", e.getGuild().getTimeCreated().toString(), false);
-            embedBuilder.addField("Jamin:", e.getGuild().getRegionRaw(), false);
+            //embedBuilder.addField("Jamin:", e.getGuild().getRe, false);
             embedBuilder.addField("Pramanikaran:", e.getGuild().getVerificationLevel().name(), false);
 
 
             embedBuilder.setColor(Color.CYAN);
-            e.getChannel().sendMessage(embedBuilder.build()).queue();
+            e.getChannel().sendMessage((MessageCreateData.fromEmbeds(embedBuilder.build()))).queue();
         }
     }
 }

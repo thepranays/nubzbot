@@ -3,8 +3,9 @@ package com.nubzbot.Events;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 
+
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.restaction.pagination.AuditLogPaginationAction;
 
@@ -15,7 +16,8 @@ import java.util.List;
 public class SelfDefense extends ListenerAdapter {
 
     @Override
-    public void onGuildVoiceLeave(@Nonnull GuildVoiceLeaveEvent event) {
+    public void onGuildVoiceUpdate(@Nonnull GuildVoiceUpdateEvent event) {
+        if(event.getChannelLeft()==null) return; //as join event
         //ASYNC Request to get page of audit log
         AuditLogPaginationAction auditLogEntries = event.getGuild().retrieveAuditLogs();
         List<AuditLogEntry> auditLogEntryList = auditLogEntries.complete();

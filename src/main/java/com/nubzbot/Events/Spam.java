@@ -3,8 +3,10 @@ package com.nubzbot.Events;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 
+
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
@@ -15,7 +17,7 @@ public class Spam extends ListenerAdapter {
     //v1.0
 
     @Override
-    public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent e) {
+    public void onMessageReceived(@Nonnull MessageReceivedEvent e) {
         String spamCommandString = e.getMessage().getContentRaw();
         String[] spamCommand = spamCommandString.split(" ");
 
@@ -24,7 +26,7 @@ public class Spam extends ListenerAdapter {
                 //CHECK WHEATHER HAS VALID PERMISSION TO USE THIS SPAM FEATURE
                 try {
                     if (!spamCommand[1].isEmpty()) {
-                        Member member = e.getMessage().getMentionedMembers().get(0);
+                        Member member = e.getMessage().getMentions().getMembers().get(0);
                         User user = member.getUser();
 
                         user.openPrivateChannel().queue((channel) ->
@@ -39,7 +41,7 @@ public class Spam extends ListenerAdapter {
                                     }
                                 } else {
                                     //IF NOT NO SPECIFIC SPAM MESSAGE INPUT FOUND
-                                    System.out.println("asdasdas");
+
                                     for (int i = 0; i <= 10; i++) {
                                         channel.sendMessage(".").queue();
                                     }

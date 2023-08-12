@@ -2,7 +2,8 @@ package com.nubzbot.MusicPlayer;
 
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 
@@ -10,7 +11,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class SeekPlayer extends ListenerAdapter {
 
     @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+    public void onMessageReceived(MessageReceivedEvent event) {
+        if (!event.isFromGuild()) return;
         PlayerManager playerManager = PlayerManager.getINSTANCE();
         GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
         AudioPlayer audioPlayer = guildMusicManager.player;

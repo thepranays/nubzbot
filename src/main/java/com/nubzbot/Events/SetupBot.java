@@ -21,7 +21,7 @@ public class SetupBot extends ListenerAdapter {
     public void onGuildMemberJoin(GuildMemberJoinEvent e){
         User joinedUser = e.getUser();
         Role role =e.getGuild().getRolesByName("EXAMPLE",true).get(0);
-        e.getGuild().addRoleToMember(joinedUser.getId(),role);
+        e.getGuild().addRoleToMember(joinedUser,role);
 
         }
     }

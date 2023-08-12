@@ -4,8 +4,11 @@ package com.nubzbot.Commands;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+
 import javax.swing.plaf.ColorUIResource;
 
 
@@ -14,13 +17,13 @@ public class UserInfo extends ListenerAdapter {
     //UNDER WORK
 
 
-    public void onGuildMessageReceived(GuildMessageReceivedEvent e){
+    public void onMessageReceived(MessageReceivedEvent e){
    
 
         String[] commandMessage = e.getMessage().getContentRaw().split(" ");
         try {
             if (commandMessage[0].equalsIgnoreCase("userinfo")) {
-                Member mentionedMember = e.getMessage().getMentionedMembers().get(0);
+                Member mentionedMember = e.getMessage().getMentions().getMembers().get(0);
                 try {
                     Activity mentionedMemberActivity = mentionedMember.getActivities().get(0);
                     EmbedBuilder userInfo = new EmbedBuilder();
@@ -39,7 +42,7 @@ public class UserInfo extends ListenerAdapter {
 ////                       }
 
                     userInfo.setColor(ColorUIResource.CYAN);
-                    e.getChannel().sendMessage(userInfo.build()).queue();
+                    e.getChannel().sendMessage((CharSequence) userInfo.build()).queue();
 
                 }catch(IndexOutOfBoundsException noActivityExcep){
                     EmbedBuilder userInfo = new EmbedBuilder();
@@ -58,7 +61,7 @@ public class UserInfo extends ListenerAdapter {
 
 
                     userInfo.setColor(ColorUIResource.CYAN);
-                    e.getChannel().sendMessage(userInfo.build()).queue();
+                    e.getChannel().sendMessage((MessageCreateData.fromEmbeds(userInfo.build()))).queue();
                 }
             }
         }catch(IndexOutOfBoundsException noMentionException){
