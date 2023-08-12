@@ -5,13 +5,14 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 
@@ -23,8 +24,9 @@ public class QueueCommand extends ListenerAdapter {
 
 
     @Override
-    public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
-        TextChannel channel = event.getChannel();
+    public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
+        if (!event.isFromGuild()) return;
+        TextChannel channel = event.getChannel().asTextChannel();
         PlayerManager playerManager = PlayerManager.getINSTANCE();
         GuildMusicManager musicManager = playerManager.getGuildMusicManger(event.getGuild());
         BlockingQueue<AudioTrack> queue = musicManager.scheduler.getQueue();
@@ -54,7 +56,7 @@ public class QueueCommand extends ListenerAdapter {
                 ));
             }
 
-            channel.sendMessage(builder.build()).queue();
+            channel.sendMessage((CharSequence) builder.build()).queue();
 
         }
 

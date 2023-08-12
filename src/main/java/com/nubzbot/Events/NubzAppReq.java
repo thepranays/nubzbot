@@ -5,7 +5,8 @@ import com.nubzbot.MusicPlayer.PlayerManager;
 import com.nubzbot.MusicPlayer.TrackScheduler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,8 @@ import org.jetbrains.annotations.NotNull;
 public class NubzAppReq extends ListenerAdapter {
 
     @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (!event.isFromGuild()) return;
         PlayerManager playerManager = PlayerManager.getINSTANCE();
         AudioManager audioManager = event.getGuild().getAudioManager();
         GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());

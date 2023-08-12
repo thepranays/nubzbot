@@ -1,16 +1,20 @@
 package com.nubzbot.Events;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import java.awt.*;
 
 public class Vote extends ListenerAdapter {
     //v1.0
 
-
-    public void onGuildMessageReceived(GuildMessageReceivedEvent e){
+    @Override
+    public void onMessageReceived(MessageReceivedEvent e){
         String commandString = e.getMessage().getContentRaw();
         String[] commandI = commandString.split(" ");
 
@@ -22,10 +26,11 @@ public class Vote extends ListenerAdapter {
                     votePage.setTitle(voteTopic);
                     votePage.setDescription("MATDAN BY:"+e.getAuthor().getName());
                     votePage.setColor(Color.CYAN);
-                    e.getChannel().sendMessage(votePage.build()).queue(message -> {
-                        message.addReaction("✅").queue();
-                        message.addReaction("❌").queue();
-
+                    e.getChannel().sendMessage(MessageCreateData.fromEmbeds(votePage.build())).queue(message -> {
+//                        message.addReaction("✅").queue();
+//                        message.addReaction("❌").queue();
+                        message.addReaction(Emoji.fromFormatted("✅")).queue();
+                        message.addReaction(Emoji.fromFormatted("❌")).queue();
                     });
 
 

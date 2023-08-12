@@ -10,9 +10,11 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 
@@ -52,21 +54,21 @@ public class PlayCommand extends ListenerAdapter {
 
 
 
-    private void joinChannel(GuildMessageReceivedEvent event,String inputReceived,Member voiceRecoUser,boolean onReco){
+    private void joinChannel(MessageReceivedEvent event, String inputReceived, Member voiceRecoUser, boolean onReco){
         PlayerManager playerManager = PlayerManager.getINSTANCE();
-        TextChannel channel = event.getChannel();
+        TextChannel channel = event.getChannel().asTextChannel();
         AudioManager audioManager = event.getGuild().getAudioManager();
         GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
         AudioPlayer audioPlayer =guildMusicManager.player;
         GuildVoiceState memberVoiceState = event.getMember().getVoiceState();
-        VoiceChannel voiceChannel = memberVoiceState.getChannel();
+        VoiceChannel voiceChannel = memberVoiceState.getChannel().asVoiceChannel();
         Member selfMember = event.getGuild().getSelfMember();
 
-        if(!memberVoiceState.inVoiceChannel()){
+        if(!memberVoiceState.inAudioChannel()){
             if(!(voiceRecoUser==null)){
                 if(onReco) {
                     GuildVoiceState memberVoiceStateReco = voiceRecoUser.getVoiceState();
-                    VoiceChannel voiceChannelReco = memberVoiceStateReco.getChannel();
+                    VoiceChannel voiceChannelReco = memberVoiceStateReco.getChannel().asVoiceChannel();
                     audioManager.openAudioConnection(voiceChannelReco);
                 }
             }
@@ -75,7 +77,7 @@ public class PlayCommand extends ListenerAdapter {
             audioManager.openAudioConnection(voiceChannel);
 
             //Check whether user  is in channel or not
-            if (!(memberVoiceState.inVoiceChannel())) {
+            if (!(memberVoiceState.inAudioChannel())) {
                 channel.sendMessage("Bhai Channel Join Karle Pehle..").queue();
                 return;
             }
@@ -113,21 +115,20 @@ public class PlayCommand extends ListenerAdapter {
     }
 
 
-    private void joinChannel(GuildMessageReceivedEvent event,String inputReceived){
+    private void joinChannel(MessageReceivedEvent event,String inputReceived){
         PlayerManager playerManager = PlayerManager.getINSTANCE();
-        TextChannel channel = event.getChannel();
+        TextChannel channel = event.getChannel().asTextChannel();
         AudioManager audioManager = event.getGuild().getAudioManager();
         GuildMusicManager guildMusicManager = playerManager.getGuildMusicManger(event.getGuild());
         AudioPlayer audioPlayer =guildMusicManager.player;
         GuildVoiceState memberVoiceState = event.getMember().getVoiceState();
-        VoiceChannel voiceChannel = memberVoiceState.getChannel();
+        VoiceChannel voiceChannel = memberVoiceState.getChannel().asVoiceChannel();
         Member selfMember = event.getGuild().getSelfMember();
 
 
-            audioManager.openAudioConnection(voiceChannel);
+        audioManager.openAudioConnection(voiceChannel);
 
 
-            System.out.println("User not in channel");;
 
 
 
@@ -164,7 +165,7 @@ public class PlayCommand extends ListenerAdapter {
 
         }
         //Check whether user  is in channel or not
-        if (!(memberVoiceState.inVoiceChannel())) {
+        if (!(memberVoiceState.inAudioChannel())) {
             channel.sendMessage("Bhai Channel Join Karle Pehle..").queue();
             return;
         }
@@ -173,8 +174,9 @@ public class PlayCommand extends ListenerAdapter {
 
     }
 
-
-    public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+    @Override
+    public void onMessageReceived(MessageReceivedEvent e) {
+        if (!e.isFromGuild()) return;
         String inputRawString = e.getMessage().getContentRaw();
 
 
@@ -186,11 +188,11 @@ public class PlayCommand extends ListenerAdapter {
                     try {
                         //FOr VoiceReco Through App
                         if(e.getMessage().getMember() == e.getGuild().getSelfMember()) {
-                            if (!(e.getMessage().getMentionedMembers().get(0) == null)) {
+                            if (!(e.getMessage().getMentions().getMembers().get(0)== null)) {
                                 if(e.getMessage().getContentRaw().startsWith("<@")){
                                      //Ignore As Only MentionedMember String is put in songreq
                                 }else {
-                                    joinChannel(e, songNameOnly[0], e.getMessage().getMentionedMembers().get(0), true);
+                                    joinChannel(e, songNameOnly[0], e.getMessage().getMentions().getMembers().get(0), true);
                                 }
                             }
 
@@ -243,12 +245,12 @@ public class PlayCommand extends ListenerAdapter {
         Then,Play
      */
 
-    private void play(String inputReceived,PlayerManager playerManager,TextChannel channel,GuildMessageReceivedEvent event){
+    private void play(String inputReceived,PlayerManager playerManager,TextChannel channel,MessageReceivedEvent event){
         //CHECK WHEATHER THE INPUT MESSAGE IS URL OR NORMAL SEARCH
         if(!(isUrl(inputReceived))){
             String ytSearched = youtubeAPISearch(inputReceived);
             if(ytSearched ==null){
-                playerManager.loadAndPlay(event.getChannel(), inputReceived);
+                playerManager.loadAndPlay(event.getChannel().asTextChannel(), inputReceived);
                 return;
             }
 
@@ -260,7 +262,7 @@ public class PlayCommand extends ListenerAdapter {
             playerManager.loadAndPlay(channel, inputReceived);
 
         }else {
-            playerManager.loadAndPlay(event.getChannel(),inputReceived);
+            playerManager.loadAndPlay(event.getChannel().asTextChannel(),inputReceived);
 
         }
     }
