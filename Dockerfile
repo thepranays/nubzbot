@@ -7,4 +7,4 @@ COPY src /usr/local/service/src
 WORKDIR /usr/local/service/
 RUN mvn package
 
-CMD ["java","-cp","target/discordprivatebot-1.0-jar-with-dependencies.jar","com.nubzbot.main"]
+CMD ["java","-cp","target/uber-discordprivatebot-1.0.jar","com.nubzbot.main"]
